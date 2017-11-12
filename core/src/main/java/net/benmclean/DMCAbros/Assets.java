@@ -7,10 +7,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Disposable;
 import net.benmclean.utils.AtlasRepacker;
 import net.benmclean.utils.PaletteShader;
 
-public class Assets {
+public class Assets implements Disposable {
 
     public static final int transparent = Color.rgba8888(0f, 0f, 0f, 0f);
     public static final int TILE_WIDTH = 16;
