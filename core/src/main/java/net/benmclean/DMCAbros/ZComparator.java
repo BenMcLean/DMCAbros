@@ -1,0 +1,23 @@
+package net.benmclean.DMCAbros;
+
+import com.badlogic.ashley.core.ComponentMapper;
+import com.badlogic.ashley.core.Entity;
+
+import java.util.Comparator;
+
+/**
+ * Some code was copied from https://github.com/RoaringCatGames/libgdx-ashley-box2d-example
+ */
+public class ZComparator implements Comparator<Entity> {
+    private ComponentMapper<Components.TransformComponent> transformM;
+
+    public ZComparator() {
+        transformM = ComponentMapper.getFor(Components.TransformComponent.class);
+    }
+
+    @Override
+    public int compare(Entity entityA, Entity entityB) {
+        return (int) Math.signum(transformM.get(entityB).position.z -
+                transformM.get(entityA).position.z);
+    }
+}
