@@ -12,6 +12,8 @@ import net.benmclean.utils.AtlasRepacker;
 import net.benmclean.utils.PaletteShader;
 
 public class Assets implements Disposable {
+    public static final int VIRTUAL_WIDTH = 356;
+    public static final int VIRTUAL_HEIGHT = 200;
     public static final int transparent = Color.rgba8888(0f, 0f, 0f, 0f);
     public static final int sky = Color.rgba8888(93 / 255f,148 / 255f,251 / 255f, 1f);
     public static final int brickDark = Color.rgba8888(204 / 255f,75 / 255f,9 / 255f, 1f);
@@ -20,6 +22,8 @@ public class Assets implements Disposable {
     public static final int clouds = Color.rgba8888(219 / 255f,252 / 255f,1f,1f);
     public static final int TILE_WIDTH = 16;
     public static final int TILE_HEIGHT = 16;
+
+    
     public Texture one;
     public TextureAtlas atlas;
     public Skin skin;

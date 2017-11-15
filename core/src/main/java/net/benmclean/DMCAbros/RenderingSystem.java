@@ -5,10 +5,10 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.SortedIteratingSystem;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.Comparator;
 
@@ -16,15 +16,17 @@ import java.util.Comparator;
  * Some code was copied from https://github.com/RoaringCatGames/libgdx-ashley-box2d-example
  */
 public class RenderingSystem extends SortedIteratingSystem {
-
     static final float PPM = 16.0f;
-    static final float FRUSTUM_WIDTH = Gdx.graphics.getWidth() / PPM;//37.5f;
-    static final float FRUSTUM_HEIGHT = Gdx.graphics.getHeight() / PPM;//.0f;
-
     public static final float PIXELS_TO_METRES = 1.0f / PPM;
-
     private static Vector2 meterDimensions = new Vector2();
     private static Vector2 pixelDimensions = new Vector2();
+    public Assets assets;
+    private SpriteBatch batch;
+    private Viewport view;
+    private Array<Entity> renderQueue;
+    private Comparator<Entity> comparator;
+    private ComponentMapper<Components.TextureRegionComponent> textureM;
+    private ComponentMapper<Components.TransformComponent> transformM;
 
     public static Vector2 getScreenSizeInMeters() {
         meterDimensions.set(Gdx.graphics.getWidth() * PIXELS_TO_METRES,
@@ -41,15 +43,7 @@ public class RenderingSystem extends SortedIteratingSystem {
         return pixelValue * PIXELS_TO_METRES;
     }
 
-    private SpriteBatch batch;
-    private Array<Entity> renderQueue;
-    private Comparator<Entity> comparator;
-    private OrthographicCamera cam;
-
-    private ComponentMapper<Components.TextureRegionComponent> textureM;
-    private ComponentMapper<Components.TransformComponent> transformM;
-
-    public RenderingSystem(SpriteBatch batch) {
+    public RenderingSystem(SpriteBatch batch, Viewport view, Assets assets) {
         super(Family.all(Components.TransformComponent.class, Components.TextureRegionComponent.class).get(), new ZComparator());
 
         textureM = ComponentMapper.getFor(Components.TextureRegionComponent.class);
@@ -58,9 +52,8 @@ public class RenderingSystem extends SortedIteratingSystem {
         renderQueue = new Array<Entity>();
 
         this.batch = batch;
-
-        cam = new OrthographicCamera(FRUSTUM_WIDTH, FRUSTUM_HEIGHT);
-        cam.position.set(FRUSTUM_WIDTH / 2f, FRUSTUM_HEIGHT / 2f, 0);
+        this.view = view;
+        this.assets = assets;
     }
 
     @Override
@@ -69,10 +62,12 @@ public class RenderingSystem extends SortedIteratingSystem {
 
         renderQueue.sort(comparator);
 
-        cam.update();
-        batch.setProjectionMatrix(cam.combined);
+        view.getCamera().update();
+        batch.setProjectionMatrix(view.getCamera().combined);
         batch.enableBlending();
         batch.begin();
+
+        batch.draw(assets.atlas.findRegion("bricks/brick00"), 0, 0);
 
         for (Entity entity : renderQueue) {
             Components.TextureRegionComponent tex = textureM.get(entity);
@@ -81,7 +76,6 @@ public class RenderingSystem extends SortedIteratingSystem {
             if (tex.region == null || t.isHidden) {
                 continue;
             }
-
 
             float width = tex.region.getRegionWidth();
             float height = tex.region.getRegionHeight();
@@ -106,7 +100,7 @@ public class RenderingSystem extends SortedIteratingSystem {
         renderQueue.add(entity);
     }
 
-    public OrthographicCamera getCamera() {
-        return cam;
+    public Viewport getView() {
+        return view;
     }
 }

@@ -4,30 +4,51 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
  * Some code was copied from https://github.com/RoaringCatGames/libgdx-ashley-box2d-example
  */
-public class GameScreen extends ScreenAdapter {
+public class GameScreen extends ScreenAdapter implements Disposable {
+
     public Assets assets;
-    private boolean isInitialized = false;
-    private float elapsedTime = 0f;
-    private int secondsToSplash = 10;
-    private World world;
+    protected boolean isInitialized = false;
+    protected float elapsedTime = 0f;
+    protected int secondsToSplash = 10;
+    protected World world;
 
-    private PooledEngine engine;
+    protected PooledEngine engine;
 
-    private SpriteBatch batch;
-    private IScreenDispatcher dispatcher;
+    protected SpriteBatch batch;
+    protected FrameBuffer frameBuffer;
+    protected IScreenDispatcher dispatcher;
+    protected Texture screenTexture;
+    protected TextureRegion screenRegion;
+    protected Viewport worldView;
+    protected Viewport screenView;
+    protected Entity e;
 
-    public GameScreen(Assets assets, SpriteBatch batch, IScreenDispatcher dispatcher) {
+    public GameScreen(Assets assets, SpriteBatch batch, FrameBuffer frameBuffer, IScreenDispatcher dispatcher) {
         super();
         this.batch = batch;
+        this.frameBuffer = frameBuffer;
         this.dispatcher = dispatcher;
         this.assets = assets;
+        worldView = new FitViewport(Assets.VIRTUAL_WIDTH, Assets.VIRTUAL_HEIGHT);
+        screenView = new FitViewport(Assets.VIRTUAL_WIDTH, Assets.VIRTUAL_HEIGHT);
+        screenView.getCamera().position.set(Assets.VIRTUAL_WIDTH / 2, Assets.VIRTUAL_HEIGHT / 2, 0);
+        screenView.update(Assets.VIRTUAL_WIDTH, Assets.VIRTUAL_HEIGHT);
+        screenRegion = new TextureRegion();
+        batch.enableBlending();
     }
 
     private void init() {
@@ -35,72 +56,57 @@ public class GameScreen extends ScreenAdapter {
         isInitialized = true;
 
         world = new World(new Vector2(0f, -9.8f), true);
-        //Add Texture Component
         engine = new PooledEngine();
 
-
-        RenderingSystem renderingSystem = new RenderingSystem(batch);
+        RenderingSystem renderingSystem = new RenderingSystem(batch, worldView, assets);
         engine.addSystem(renderingSystem);
         engine.addSystem(new PhysicsSystem(world));
 
-        Entity e = buildPuffin(world);
-        engine.addEntity(e);
-        engine.addEntity(buildFloorEntity(world));
+        engine.addEntity(brick());
 
         isInitialized = true;
     }
 
-    private Entity buildPuffin(World world) {
-        Entity e = engine.createEntity();
-
-        Components.TextureRegionComponent tc = new Components.TextureRegionComponent();
-
-        tc.region = assets.atlas.findRegion("bricks/brick00");
-        e.add(tc);
-
+    public Entity brick() {
+        Entity e = new Entity();
         Components.TransformComponent tfc = new Components.TransformComponent();
-        tfc.position.set(10f, 10f, 1f);
-        tfc.rotation = 15f;
-        tfc.scale.set(0.25f, 0.25f);
+        tfc.position.set(0, 0, 1);
+        tfc.rotation = 0;
+        tfc.scale.set(1, 1);
         e.add(tfc);
-
         Components.BodyComponent bc = new Components.BodyComponent();
         BodyDef bodyDef = new BodyDef();
-        // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-
-        // Set our body's starting position in the world
-        bodyDef.position.set(10f, 23f);
-
-        // Create our body in the world using our body definition
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+        bodyDef.position.set(0, 0);
         bc.body = world.createBody(bodyDef);
-        bc.body.applyAngularImpulse(50f, true);
-
-        // Create a circle shape and set its radius to 6
-        CircleShape circle = new CircleShape();
-        circle.setRadius(2f);
-
-        // Create a fixture definition to apply our shape to
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = circle;
-        fixtureDef.density = 20f;
-        fixtureDef.friction = 0.4f;
-        fixtureDef.restitution = 0.6f; // Make it bounce a little bit
-
-        // Create our fixture and attach it to the body
-        bc.body.createFixture(fixtureDef);
-
-        // Remember to dispose of any shapes after you're done with them!
-        // BodyDef and FixtureDef don't need disposing, but shapes do.
-        circle.dispose();
-
         e.add(bc);
+        Components.TextureRegionComponent tc = new Components.TextureRegionComponent();
+        tc.region = assets.atlas.findRegion("bricks/brick00");
+        e.add(tc);
         return e;
     }
 
-
     private void update(float delta) {
+        frameBuffer.begin();
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        worldView.getCamera().position.set(0,0,0);
+        worldView.update(Assets.VIRTUAL_WIDTH, Assets.VIRTUAL_HEIGHT);
+        batch.setProjectionMatrix(worldView.getCamera().combined);
+        worldView.apply();
         engine.update(delta);
+        frameBuffer.end();
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        screenView.apply();
+        batch.setProjectionMatrix(screenView.getCamera().combined);
+        batch.begin();
+        screenTexture = frameBuffer.getColorBufferTexture();
+        screenTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        screenRegion.setRegion(screenTexture);
+        screenRegion.flip(false, true);
+        batch.draw(screenRegion, 0, 0);
+        batch.end();
 
         elapsedTime += delta;
         if (elapsedTime / 1000f > secondsToSplash) {
@@ -118,41 +124,8 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
-    private Entity buildFloorEntity(World world) {
-
-        Entity e = engine.createEntity();
-        Vector2 screenMeters = RenderingSystem.getScreenSizeInMeters();
-        Gdx.app.log("Screen", "Meters:" + screenMeters.x + " x " + screenMeters.y);
-        Vector2 screenPixels = RenderingSystem.getScreenSizeInPixesl();
-        Gdx.app.log("Screen", "Pixels:" + screenPixels.x + " x " + screenPixels.y);
-        // Create our body definition
-        BodyDef groundBodyDef = new BodyDef();
-        groundBodyDef.type = BodyDef.BodyType.StaticBody;
-
-        // Set its world position
-        groundBodyDef.position.set(new Vector2(6f, 1f));
-        groundBodyDef.angle = 0f;
-
-        Components.BodyComponent bc = new Components.BodyComponent();
-        // Create a body from the defintion and add it to the world
-        bc.body = world.createBody(groundBodyDef);
-
-        // Create a polygon shape
-        PolygonShape groundBox = new PolygonShape();
-        // Set the polygon shape as a box which is twice the size of our view port and 20 high
-        // (setAsBox takes half-width and half-height as arguments)
-
-        groundBox.setAsBox(5f, 1f);
-
-        // Create a fixture from our polygon shape and add it to our ground body
-        bc.body.createFixture(groundBox, 0.0f);
-
-
-        // Clean up after ourselves
-        groundBox.dispose();
-
-        e.add(bc);
-
-        return e;
+    @Override
+    public void dispose() {
+        screenTexture.dispose();
     }
 }
