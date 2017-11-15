@@ -46,7 +46,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         worldView = new FitViewport(Assets.VIRTUAL_WIDTH, Assets.VIRTUAL_HEIGHT);
         screenView = new FitViewport(Assets.VIRTUAL_WIDTH, Assets.VIRTUAL_HEIGHT);
         screenView.getCamera().position.set(Assets.VIRTUAL_WIDTH / 2, Assets.VIRTUAL_HEIGHT / 2, 0);
-        screenView.update(Assets.VIRTUAL_WIDTH, Assets.VIRTUAL_HEIGHT);
+        screenView.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         screenRegion = new TextureRegion();
         batch.enableBlending();
     }
@@ -96,7 +96,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         engine.update(delta);
         batch.end();
         frameBuffer.end();
-        Gdx.gl.glClearColor(0f, 0f, 1f, 1f);
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         screenView.apply();
         batch.setProjectionMatrix(screenView.getCamera().combined);
@@ -122,6 +122,11 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         } else {
             init();
         }
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        screenView.update(width, height);
     }
 
     @Override
