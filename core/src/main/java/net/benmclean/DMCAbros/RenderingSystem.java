@@ -61,12 +61,6 @@ public class RenderingSystem extends SortedIteratingSystem {
         super.update(deltaTime);
 
         renderQueue.sort(comparator);
-
-        view.getCamera().update();
-        batch.setProjectionMatrix(view.getCamera().combined);
-        batch.enableBlending();
-        batch.begin();
-
         batch.draw(assets.atlas.findRegion("bricks/brick00"), 0, 0);
 
         for (Entity entity : renderQueue) {
@@ -90,8 +84,6 @@ public class RenderingSystem extends SortedIteratingSystem {
                     PixelsToMeters(t.scale.x), PixelsToMeters(t.scale.y),
                     t.rotation);
         }
-
-        batch.end();
         renderQueue.clear();
     }
 
