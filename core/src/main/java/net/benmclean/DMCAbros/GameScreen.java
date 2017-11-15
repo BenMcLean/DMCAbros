@@ -57,9 +57,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
 
         world = new World(new Vector2(0f, -9.8f), true);
         engine = new PooledEngine();
-
-        RenderingSystem renderingSystem = new RenderingSystem(batch, worldView, assets);
-        engine.addSystem(renderingSystem);
+        engine.addSystem(new RenderingSystem(batch, worldView, assets));
         engine.addSystem(new PhysicsSystem(world));
 
         engine.addEntity(brick());
@@ -98,7 +96,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         engine.update(delta);
         batch.end();
         frameBuffer.end();
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
+        Gdx.gl.glClearColor(0f, 0f, 1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         screenView.apply();
         batch.setProjectionMatrix(screenView.getCamera().combined);
