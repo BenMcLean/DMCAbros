@@ -59,10 +59,7 @@ public class RenderingSystem extends SortedIteratingSystem {
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
-
         renderQueue.sort(comparator);
-        batch.draw(assets.atlas.findRegion("bricks/brick00"), 0, 0);
-
         for (Entity entity : renderQueue) {
             Components.TextureRegionComponent tex = textureM.get(entity);
             Components.TransformComponent t = transformM.get(entity);

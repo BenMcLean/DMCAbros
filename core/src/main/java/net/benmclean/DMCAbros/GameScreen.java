@@ -67,10 +67,14 @@ public class GameScreen extends ScreenAdapter implements Disposable {
 
     public Entity brick() {
         Entity e = new Entity();
+        TextureRegion region = assets.atlas.findRegion("bricks/brick00");
+        Components.TextureRegionComponent tc = new Components.TextureRegionComponent();
+        tc.region = region;
+        e.add(tc);
         Components.TransformComponent tfc = new Components.TransformComponent();
         tfc.position.set(0, 0, 1);
         tfc.rotation = 0;
-        tfc.scale.set(1, 1);
+        tfc.scale.set(region.getRegionWidth(), region.getRegionHeight());
         e.add(tfc);
         Components.BodyComponent bc = new Components.BodyComponent();
         BodyDef bodyDef = new BodyDef();
@@ -78,9 +82,6 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         bodyDef.position.set(0, 0);
         bc.body = world.createBody(bodyDef);
         e.add(bc);
-        Components.TextureRegionComponent tc = new Components.TextureRegionComponent();
-        tc.region = assets.atlas.findRegion("bricks/brick00");
-        e.add(tc);
         return e;
     }
 
