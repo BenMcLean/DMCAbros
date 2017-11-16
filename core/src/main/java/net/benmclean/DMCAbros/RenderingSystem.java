@@ -45,6 +45,7 @@ public class RenderingSystem extends SortedIteratingSystem {
 
     public RenderingSystem(SpriteBatch batch, Viewport view, Assets assets) {
         super(Family.all(Components.TransformComponent.class, Components.TextureRegionComponent.class).get(), new ZComparator());
+        comparator = new ZComparator();
 
         textureM = ComponentMapper.getFor(Components.TextureRegionComponent.class);
         transformM = ComponentMapper.getFor(Components.TransformComponent.class);
@@ -60,6 +61,7 @@ public class RenderingSystem extends SortedIteratingSystem {
     public void update(float deltaTime) {
         super.update(deltaTime);
         renderQueue.sort(comparator);
+
         for (Entity entity : renderQueue) {
             Components.TextureRegionComponent tex = textureM.get(entity);
             Components.TransformComponent t = transformM.get(entity);

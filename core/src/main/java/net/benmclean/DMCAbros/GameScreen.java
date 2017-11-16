@@ -61,6 +61,8 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         engine.addSystem(new PhysicsSystem(world));
 
         engine.addEntity(brick(0, 0));
+        engine.addEntity(brick(1, 0));
+        engine.addEntity(brick(2, 0));
 
         isInitialized = true;
     }
@@ -80,7 +82,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         Components.BodyComponent bc = new Components.BodyComponent();
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(0, 0);
+        bodyDef.position.set(tfc.position.x, tfc.position.y);
         bc.body = world.createBody(bodyDef);
         e.add(bc);
         return e;
@@ -95,7 +97,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         batch.setProjectionMatrix(worldView.getCamera().combined);
         worldView.apply();
         batch.begin();
-        engine.update(delta);
+        engine.update(delta); // This is where the magic happens.
         batch.end();
         frameBuffer.end();
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
