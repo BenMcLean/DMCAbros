@@ -17,7 +17,7 @@ public class ZComparator implements Comparator<Entity> {
 
     @Override
     public int compare(Entity entityA, Entity entityB) {
-        return (int) Math.signum(transformM.get(entityB).position.z -
-                transformM.get(entityA).position.z);
+        return (int) Math.signum(transformM.get(entityB).z -
+                transformM.get(entityA).z);
     }
 }

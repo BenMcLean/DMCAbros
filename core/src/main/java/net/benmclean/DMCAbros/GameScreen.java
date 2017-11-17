@@ -19,7 +19,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  * Some code was copied from https://github.com/RoaringCatGames/libgdx-ashley-box2d-example
  */
 public class GameScreen extends ScreenAdapter implements Disposable {
-
     public Assets assets;
     protected boolean isInitialized = false;
     protected float elapsedTime = 0f;
@@ -77,14 +76,13 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         tc.region = region;
         e.add(tc);
         Components.TransformC tfc = new Components.TransformC();
-        tfc.position.set(x * sizeX, y * sizeY, 1);
-        tfc.rotation = 0;
+        tfc.z = 1;
         tfc.scale.set(sizeX, sizeY);
         e.add(tfc);
         Components.BodyC bc = new Components.BodyC();
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(tfc.position.x, tfc.position.y);
+        bodyDef.position.set(x * sizeX, y * sizeY);
         bc.body = world.createBody(bodyDef);
         e.add(bc);
         return e;
@@ -98,14 +96,13 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         tc.region = region;
         e.add(tc);
         Components.TransformC tfc = new Components.TransformC();
-        tfc.position.set(x * sizeX, y * sizeY, 1);
-        tfc.rotation = 0;
+        tfc.z = 1;
         tfc.scale.set(sizeX, sizeY);
         e.add(tfc);
         Components.BodyC bc = new Components.BodyC();
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(tfc.position.x, tfc.position.y);
+        bodyDef.position.set(x * sizeX, y * sizeY);
         bc.body = world.createBody(bodyDef);
         e.add(bc);
         return e;

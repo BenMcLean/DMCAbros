@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 
 /**
@@ -12,9 +11,7 @@ import com.badlogic.gdx.physics.box2d.Body;
  */
 public class Components {
     public static class TransformC implements Component {
-        public final Vector3 position = new Vector3();
         public final Vector2 scale = new Vector2(1.0f, 1.0f);
-        public float rotation = 0.0f;
         public float z=0;
         public boolean isHidden = false;
     }
