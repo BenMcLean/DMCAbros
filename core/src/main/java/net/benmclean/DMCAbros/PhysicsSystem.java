@@ -19,11 +19,11 @@ public class PhysicsSystem extends IteratingSystem {
     private World world;
     private Array<Entity> bodiesQueue;
 
-    private ComponentMapper<Components.BodyComponent> bm = ComponentMapper.getFor(Components.BodyComponent.class);
-    private ComponentMapper<Components.TransformComponent> tm = ComponentMapper.getFor(Components.TransformComponent.class);
+    private ComponentMapper<Components.BodyC> bm = ComponentMapper.getFor(Components.BodyC.class);
+    private ComponentMapper<Components.TransformC> tm = ComponentMapper.getFor(Components.TransformC.class);
 
     public PhysicsSystem(World world) {
-        super(Family.all(Components.BodyComponent.class, Components.TransformComponent.class).get());
+        super(Family.all(Components.BodyC.class, Components.TransformC.class).get());
 
         this.world = world;
         this.bodiesQueue = new Array<>();
@@ -40,8 +40,8 @@ public class PhysicsSystem extends IteratingSystem {
 
             //Entity Queue
             for (Entity entity : bodiesQueue) {
-                Components.TransformComponent tfm = tm.get(entity);
-                Components.BodyComponent bodyComp = bm.get(entity);
+                Components.TransformC tfm = tm.get(entity);
+                Components.BodyC bodyComp = bm.get(entity);
                 Vector2 position = bodyComp.body.getPosition();
                 tfm.position.x = position.x;
                 tfm.position.y = position.y;

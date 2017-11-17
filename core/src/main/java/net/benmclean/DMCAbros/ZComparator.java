@@ -9,10 +9,10 @@ import java.util.Comparator;
  * Some code was copied from https://github.com/RoaringCatGames/libgdx-ashley-box2d-example
  */
 public class ZComparator implements Comparator<Entity> {
-    private ComponentMapper<Components.TransformComponent> transformM;
+    private ComponentMapper<Components.TransformC> transformM;
 
     public ZComparator() {
-        transformM = ComponentMapper.getFor(Components.TransformComponent.class);
+        transformM = ComponentMapper.getFor(Components.TransformC.class);
     }
 
     @Override

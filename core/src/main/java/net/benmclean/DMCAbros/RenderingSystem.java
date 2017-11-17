@@ -25,8 +25,8 @@ public class RenderingSystem extends SortedIteratingSystem {
     private Viewport view;
     private Array<Entity> renderQueue;
     private Comparator<Entity> comparator;
-    private ComponentMapper<Components.TextureRegionComponent> textureM;
-    private ComponentMapper<Components.TransformComponent> transformM;
+    private ComponentMapper<Components.TextureRegionC> textureM;
+    private ComponentMapper<Components.TransformC> transformM;
 
     public static Vector2 getScreenSizeInMeters() {
         meterDimensions.set(Gdx.graphics.getWidth() * PIXELS_TO_METRES,
@@ -44,11 +44,11 @@ public class RenderingSystem extends SortedIteratingSystem {
     }
 
     public RenderingSystem(SpriteBatch batch, Viewport view, Assets assets) {
-        super(Family.all(Components.TransformComponent.class, Components.TextureRegionComponent.class).get(), new ZComparator());
+        super(Family.all(Components.TransformC.class, Components.TextureRegionC.class).get(), new ZComparator());
         comparator = new ZComparator();
 
-        textureM = ComponentMapper.getFor(Components.TextureRegionComponent.class);
-        transformM = ComponentMapper.getFor(Components.TransformComponent.class);
+        textureM = ComponentMapper.getFor(Components.TextureRegionC.class);
+        transformM = ComponentMapper.getFor(Components.TransformC.class);
 
         renderQueue = new Array<Entity>();
 
@@ -63,8 +63,8 @@ public class RenderingSystem extends SortedIteratingSystem {
         renderQueue.sort(comparator);
 
         for (Entity entity : renderQueue) {
-            Components.TextureRegionComponent tex = textureM.get(entity);
-            Components.TransformComponent t = transformM.get(entity);
+            Components.TextureRegionC tex = textureM.get(entity);
+            Components.TransformC t = transformM.get(entity);
 
             if (tex.region == null || t.isHidden) {
                 continue;
