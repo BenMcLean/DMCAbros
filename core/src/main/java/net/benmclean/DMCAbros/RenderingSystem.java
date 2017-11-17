@@ -55,7 +55,7 @@ public class RenderingSystem extends SortedIteratingSystem {
             }
 
             batch.draw(tex.region,
-                    body.body.getPosition().x, body.body.getPosition().y,
+                    body.body.getPosition().x - 0.5f, body.body.getPosition().y - 0.5f,
                     0, 0,
                     1, 1,
                     t.scale.x, t.scale.y,

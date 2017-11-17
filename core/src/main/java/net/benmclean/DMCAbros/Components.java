@@ -10,6 +10,20 @@ import com.badlogic.gdx.physics.box2d.Body;
  * Some code was copied from https://github.com/RoaringCatGames/libgdx-ashley-box2d-example
  */
 public class Components {
+    public enum TypeC implements Component {
+            Mob("Mob"),
+            Brick("Brick");
+            private String string;
+
+            TypeC(String string) {
+                this.string = string;
+            }
+
+            public String toString() {
+                return string;
+            }
+    }
+
     public static class TransformC implements Component {
         public final Vector2 scale = new Vector2(1.0f, 1.0f);
         public float z=0;
@@ -26,5 +40,9 @@ public class Components {
 
     public static class CollisionC implements Component {
         public Entity collisionEntity;
+    }
+
+    public static class PlayerC implements Component {
+
     }
 }
