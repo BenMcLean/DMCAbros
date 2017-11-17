@@ -5,20 +5,21 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
  * Some code was copied from https://github.com/RoaringCatGames/libgdx-ashley-box2d-example
  */
 public class GameScreen extends ScreenAdapter implements Disposable {
+    protected final float VIRTUAL_HEIGHT = 12.5f;
+
     public Assets assets;
     protected boolean isInitialized = false;
     protected float elapsedTime = 0f;
@@ -28,25 +29,27 @@ public class GameScreen extends ScreenAdapter implements Disposable {
     protected PooledEngine engine;
 
     protected SpriteBatch batch;
-    protected FrameBuffer frameBuffer;
+    protected OrthographicCamera cam;
+    //    protected FrameBuffer frameBuffer;
     protected IScreenDispatcher dispatcher;
-    protected Texture screenTexture;
-    protected TextureRegion screenRegion;
-    protected Viewport worldView;
-    protected Viewport screenView;
+    //    protected Texture screenTexture;
+//    protected TextureRegion screenRegion;
+//    protected Viewport worldView;
+//    protected Viewport screenView;
     protected Entity e;
 
     public GameScreen(Assets assets, SpriteBatch batch, FrameBuffer frameBuffer, IScreenDispatcher dispatcher) {
         super();
         this.batch = batch;
-        this.frameBuffer = frameBuffer;
         this.dispatcher = dispatcher;
         this.assets = assets;
-        worldView = new FitViewport(Assets.VIRTUAL_WIDTH, Assets.VIRTUAL_HEIGHT);
-        screenView = new FitViewport(Assets.VIRTUAL_WIDTH, Assets.VIRTUAL_HEIGHT);
-        screenView.getCamera().position.set(Assets.VIRTUAL_WIDTH / 2, Assets.VIRTUAL_HEIGHT / 2, 0);
-        screenView.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        screenRegion = new TextureRegion();
+        cam = new OrthographicCamera();
+//        this.frameBuffer = frameBuffer;
+//        worldView = new FitViewport(Assets.VIRTUAL_WIDTH, Assets.VIRTUAL_HEIGHT);
+//        screenView = new FitViewport(Assets.VIRTUAL_WIDTH, Assets.VIRTUAL_HEIGHT);
+//        screenView.getCamera().position.set(Assets.VIRTUAL_WIDTH / 2, Assets.VIRTUAL_HEIGHT / 2, 0);
+//        screenView.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+//        screenRegion = new TextureRegion();
         batch.enableBlending();
     }
 
@@ -56,7 +59,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
 
         world = new World(new Vector2(0f, -9.8f), true);
         engine = new PooledEngine();
-        engine.addSystem(new RenderingSystem(batch, worldView, assets));
+        engine.addSystem(new RenderingSystem(batch, assets));
         engine.addSystem(new PhysicsSystem(world));
 
         engine.addEntity(brick(-1, 0));
@@ -71,18 +74,18 @@ public class GameScreen extends ScreenAdapter implements Disposable {
     public Entity avatar(int x, int y) {
         Entity e = new Entity();
         TextureRegion region = assets.atlas.findRegion("characters/AstronautE0");
-        int sizeX = region.getRegionWidth(), sizeY = region.getRegionHeight();
+//        int sizeX = region.getRegionWidth(), sizeY = region.getRegionHeight();
         Components.TextureRegionC tc = new Components.TextureRegionC();
         tc.region = region;
         e.add(tc);
         Components.TransformC tfc = new Components.TransformC();
         tfc.z = 1;
-        tfc.scale.set(sizeX, sizeY);
+        tfc.scale.set(1, 1);
         e.add(tfc);
         Components.BodyC bc = new Components.BodyC();
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(x * sizeX, y * sizeY);
+        bodyDef.position.set(x, y);
         bc.body = world.createBody(bodyDef);
         e.add(bc);
         return e;
@@ -97,39 +100,23 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         e.add(tc);
         Components.TransformC tfc = new Components.TransformC();
         tfc.z = 1;
-        tfc.scale.set(sizeX, sizeY);
+        tfc.scale.set(1, 1);
         e.add(tfc);
         Components.BodyC bc = new Components.BodyC();
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(x * sizeX, y * sizeY);
+        bodyDef.position.set(x, y);
         bc.body = world.createBody(bodyDef);
         e.add(bc);
         return e;
     }
 
     private void update(float delta) {
-        frameBuffer.begin();
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        worldView.getCamera().position.set(0,0,0);
-        worldView.update(Assets.VIRTUAL_WIDTH, Assets.VIRTUAL_HEIGHT);
-        batch.setProjectionMatrix(worldView.getCamera().combined);
-        worldView.apply();
+        cam.position.set(0, VIRTUAL_HEIGHT / 2f, 0);
         batch.begin();
         engine.update(delta); // This is where the magic happens.
-        batch.end();
-        frameBuffer.end();
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        screenView.apply();
-        batch.setProjectionMatrix(screenView.getCamera().combined);
-        batch.begin();
-        screenTexture = frameBuffer.getColorBufferTexture();
-        screenTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-        screenRegion.setRegion(screenTexture);
-        screenRegion.flip(false, true);
-        batch.draw(screenRegion, 0, 0);
         batch.end();
 
         elapsedTime += delta;
@@ -150,11 +137,11 @@ public class GameScreen extends ScreenAdapter implements Disposable {
 
     @Override
     public void resize(int width, int height) {
-        screenView.update(width, height);
+        cam.setToOrtho(false, VIRTUAL_HEIGHT * width / (float)height, VIRTUAL_HEIGHT);
+        batch.setProjectionMatrix(cam.combined);
     }
 
     @Override
     public void dispose() {
-        screenTexture.dispose();
     }
 }
