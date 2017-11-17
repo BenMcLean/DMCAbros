@@ -114,7 +114,9 @@ public class GameScreen extends ScreenAdapter implements Disposable {
     private void update(float delta) {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        cam.position.set(0, VIRTUAL_HEIGHT / 2f, 0);
+        cam.position.set(0f, VIRTUAL_HEIGHT / 2f, 0);
+        cam.update();
+        batch.setProjectionMatrix(cam.combined);
         batch.begin();
         engine.update(delta); // This is where the magic happens.
         batch.end();
