@@ -112,7 +112,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         frameBuffer.begin();
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        worldView.getCamera().position.set(0,0,0);
+        worldView.getCamera().position.set(0,92,0);
         worldView.update(Assets.VIRTUAL_WIDTH, Assets.VIRTUAL_HEIGHT);
         batch.setProjectionMatrix(worldView.getCamera().combined);
         worldView.apply();
