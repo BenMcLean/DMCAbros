@@ -60,11 +60,34 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         engine.addSystem(new RenderingSystem(batch, worldView, assets));
         engine.addSystem(new PhysicsSystem(world));
 
+        engine.addEntity(brick(-1, 0));
         engine.addEntity(brick(0, 0));
         engine.addEntity(brick(1, 0));
-        engine.addEntity(brick(2, 0));
+
+        engine.addEntity(avatar(0, 2));
 
         isInitialized = true;
+    }
+
+    public Entity avatar(int x, int y) {
+        Entity e = new Entity();
+        TextureRegion region = assets.atlas.findRegion("characters/AstronautE0");
+        int sizeX = region.getRegionWidth(), sizeY = region.getRegionHeight();
+        Components.TextureRegionComponent tc = new Components.TextureRegionComponent();
+        tc.region = region;
+        e.add(tc);
+        Components.TransformComponent tfc = new Components.TransformComponent();
+        tfc.position.set(x * sizeX, y * sizeY, 1);
+        tfc.rotation = 0;
+        tfc.scale.set(sizeX, sizeY);
+        e.add(tfc);
+        Components.BodyComponent bc = new Components.BodyComponent();
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(tfc.position.x, tfc.position.y);
+        bc.body = world.createBody(bodyDef);
+        e.add(bc);
+        return e;
     }
 
     public Entity brick(int x, int y) {
