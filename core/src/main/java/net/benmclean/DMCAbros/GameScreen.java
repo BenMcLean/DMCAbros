@@ -7,7 +7,6 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -74,10 +73,8 @@ public class GameScreen extends ScreenAdapter implements Disposable {
     public Entity avatar(int x, int y) {
         Entity e = new Entity();
         e.add(Components.TypeC.Mob);
-        TextureRegion region = assets.atlas.findRegion("characters/AstronautE0");
-//        int sizeX = region.getRegionWidth(), sizeY = region.getRegionHeight();
         Components.TextureRegionC tc = engine.createComponent(Components.TextureRegionC.class);
-        tc.region = region;
+        tc.region = assets.atlas.findRegion("characters/AstronautE0");
         e.add(tc);
         Components.TransformC tfc = engine.createComponent(Components.TransformC.class);
         tfc.z = 1;
@@ -92,10 +89,8 @@ public class GameScreen extends ScreenAdapter implements Disposable {
     public Entity brick(int x, int y) {
         Entity e = new Entity();
         e.add(Components.TypeC.Brick);
-        TextureRegion region = assets.atlas.findRegion("bricks/brick00");
-        int sizeX = region.getRegionWidth(), sizeY = region.getRegionHeight();
         Components.TextureRegionC tc = engine.createComponent(Components.TextureRegionC.class);
-        tc.region = region;
+        tc.region = assets.atlas.findRegion("bricks/brick00");;
         e.add(tc);
         Components.TransformC tfc = engine.createComponent(Components.TransformC.class);
         tfc.z = 1;
