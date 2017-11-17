@@ -4,8 +4,6 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
@@ -42,10 +40,10 @@ public class PhysicsSystem extends IteratingSystem {
             for (Entity entity : bodiesQueue) {
                 Components.TransformC tfm = tm.get(entity);
                 Components.BodyC bodyComp = bm.get(entity);
-                Vector2 position = bodyComp.body.getPosition();
-                tfm.position.x = position.x;
-                tfm.position.y = position.y;
-                tfm.rotation = bodyComp.body.getAngle() * MathUtils.radiansToDegrees;
+//                Vector2 position = bodyComp.body.getPosition();
+//                tfm.position.x = position.x;
+//                tfm.position.y = position.y;
+//                tfm.rotation = bodyComp.body.getAngle() * MathUtils.radiansToDegrees;
             }
         }
         bodiesQueue.clear();

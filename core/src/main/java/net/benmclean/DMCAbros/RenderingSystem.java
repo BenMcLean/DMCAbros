@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.SortedIteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -27,6 +28,7 @@ public class RenderingSystem extends SortedIteratingSystem {
     private Comparator<Entity> comparator;
     private ComponentMapper<Components.TextureRegionC> textureM;
     private ComponentMapper<Components.TransformC> transformM;
+    private ComponentMapper<Components.BodyC> bodyM;
 
     public static Vector2 getScreenSizeInMeters() {
         meterDimensions.set(Gdx.graphics.getWidth() * PIXELS_TO_METRES,
@@ -49,6 +51,7 @@ public class RenderingSystem extends SortedIteratingSystem {
 
         textureM = ComponentMapper.getFor(Components.TextureRegionC.class);
         transformM = ComponentMapper.getFor(Components.TransformC.class);
+        bodyM = ComponentMapper.getFor(Components.BodyC.class);
 
         renderQueue = new Array<Entity>();
 
@@ -65,6 +68,7 @@ public class RenderingSystem extends SortedIteratingSystem {
         for (Entity entity : renderQueue) {
             Components.TextureRegionC tex = textureM.get(entity);
             Components.TransformC t = transformM.get(entity);
+            Components.BodyC body = bodyM.get(entity);
 
             if (tex.region == null || t.isHidden) {
                 continue;
@@ -77,11 +81,11 @@ public class RenderingSystem extends SortedIteratingSystem {
             float originY = height / 2f;
 
             batch.draw(tex.region,
-                    t.position.x - originX, t.position.y - originY,
+                    body.body.getPosition().x - originX, body.body.getPosition().y - originY,
                     originX, originY,
                     width, height,
                     PixelsToMeters(t.scale.x), PixelsToMeters(t.scale.y),
-                    t.rotation);
+                    body.body.getAngle() * MathUtils.radiansToDegrees);
         }
         renderQueue.clear();
     }

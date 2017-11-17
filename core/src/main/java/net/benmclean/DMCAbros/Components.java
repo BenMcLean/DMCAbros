@@ -15,6 +15,7 @@ public class Components {
         public final Vector3 position = new Vector3();
         public final Vector2 scale = new Vector2(1.0f, 1.0f);
         public float rotation = 0.0f;
+        public float z=0;
         public boolean isHidden = false;
     }
 
@@ -23,10 +24,10 @@ public class Components {
     }
 
     public static class TextureRegionC implements Component {
-        public TextureRegion region = null;
+        public TextureRegion region;
     }
 
-    public class Collision implements Component {
+    public static class CollisionC implements Component {
         public Entity collisionEntity;
     }
 }
