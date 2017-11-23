@@ -81,7 +81,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         tfc.scale.set(1, 1);
         e.add(tfc);
         Components.BodyC bc = engine.createComponent(Components.BodyC.class);
-        bc.body = createBox(x, y, 1f, 1f, true, world);
+        bc.body = createBox(x, y, 1f, 1f, false, world);
         e.add(bc);
         return e;
     }
