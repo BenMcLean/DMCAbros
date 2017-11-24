@@ -63,3 +63,6 @@ nb-configuration.xml
 ## OS Specific
 .DS_Store
 *.so
+
+## Include web demo in repository for Github Pages
+!html/build/dist
