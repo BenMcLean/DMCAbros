@@ -25,7 +25,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
     protected World world;
 
     protected PooledEngine engine;
-
+    protected KeyboardController controller;
     protected SpriteBatch batch;
     protected OrthographicCamera cam;
     //    protected FrameBuffer frameBuffer;
@@ -42,6 +42,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         this.dispatcher = dispatcher;
         this.assets = assets;
         cam = new OrthographicCamera();
+        controller = new KeyboardController();
 //        this.frameBuffer = frameBuffer;
 //        worldView = new FitViewport(Assets.VIRTUAL_WIDTH, Assets.VIRTUAL_HEIGHT);
 //        screenView = new FitViewport(Assets.VIRTUAL_WIDTH, Assets.VIRTUAL_HEIGHT);
@@ -60,12 +61,15 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         engine.addSystem(new RenderingSystem(batch, assets));
         engine.addSystem(new PhysicsSystem(world));
         engine.addSystem(new PhysicsDebugSystem(world, cam));
+        engine.addSystem(new PlayerControlSystem(controller));
 
         engine.addEntity(brick(-1, 0));
         engine.addEntity(brick(0, 0));
         engine.addEntity(brick(1, 0));
 
         engine.addEntity(avatar(0, 2));
+
+        Gdx.input.setInputProcessor(controller);
 
         isInitialized = true;
     }
@@ -83,6 +87,11 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         Components.BodyC bc = engine.createComponent(Components.BodyC.class);
         bc.body = createBox(x, y, true, world);
         e.add(bc);
+        Components.StateC stateCom = engine.createComponent(Components.StateC.class);
+        stateCom.set(Components.StateC.STATE_NORMAL);
+        e.add(stateCom);
+        Components.PlayerC pc = engine.createComponent(Components.PlayerC.class);
+        e.add(pc);
         return e;
     }
 

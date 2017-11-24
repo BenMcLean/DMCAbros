@@ -11,22 +11,22 @@ import com.badlogic.gdx.physics.box2d.Body;
  */
 public class Components {
     public enum TypeC implements Component {
-            Mob("Mob"),
-            Brick("Brick");
-            private String string;
+        Mob("Mob"),
+        Brick("Brick");
+        private String string;
 
-            TypeC(String string) {
-                this.string = string;
-            }
+        TypeC(String string) {
+            this.string = string;
+        }
 
-            public String toString() {
-                return string;
-            }
+        public String toString() {
+            return string;
+        }
     }
 
     public static class TransformC implements Component {
         public final Vector2 scale = new Vector2(1.0f, 1.0f);
-        public float z=0;
+        public float z = 0;
         public boolean isHidden = false;
     }
 
@@ -44,5 +44,26 @@ public class Components {
 
     public static class PlayerC implements Component {
 
+    }
+
+    public static class StateC implements Component {
+        public static final int STATE_NORMAL = 0;
+        public static final int STATE_JUMPING = 1;
+        public static final int STATE_FALLING = 2;
+        public static final int STATE_MOVING = 3;
+        public static final int STATE_HIT = 4;
+
+        private int state = 0;
+        public float time = 0.0f;
+        public boolean isLooping = false;
+
+        public void set(int newState) {
+            state = newState;
+            time = 0.0f;
+        }
+
+        public int get() {
+            return state;
+        }
     }
 }
