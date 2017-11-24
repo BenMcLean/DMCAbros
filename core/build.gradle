@@ -14,7 +14,7 @@ dependencies {
   compile "com.github.tommyettinger:regexodus:$regExodusVersion"
   compile "com.github.SquidPony.SquidLib:squidlib-extra:$squidLibExtraVersion"
   compile "com.sudoplay.joise:joise:$joiseVersion"
-  compile "com.github.ykrasik:jaci-libgdx-cli-java:$jaciVersion"
+//  compile "com.github.ykrasik:jaci-libgdx-cli-java:$jaciVersion"
   compile "com.github.czyzby:noise4j:$noise4jVersion"
   compile "net.dermetfan.libgdx-utils:libgdx-utils:$utilsVersion"
   compile "net.dermetfan.libgdx-utils:libgdx-utils-box2d:$utilsBox2dVersion"
