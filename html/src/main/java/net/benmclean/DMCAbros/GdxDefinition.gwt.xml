@@ -13,7 +13,8 @@
     <inherits name="joise" />
     <inherits name="libgdx-utils" />
     <inherits name="libgdx-utils-box2d" />
-    <inherits name="net.benmclean.DMCAbros.DMCAbrosGame" />
+    <inherits name="net.benmclean.DMCAbros" />
+    <inherits name="net.benmclean.utils" />
     <inherits name="regexodus" />
     <inherits name="squidlib" />
     <inherits name="squidlib-extra" />
