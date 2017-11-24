@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.SortedIteratingSystem;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 
@@ -44,7 +43,7 @@ public class RenderingSystem extends SortedIteratingSystem {
     public void update(float deltaTime) {
         super.update(deltaTime);
         renderQueue.sort(comparator);
-
+        batch.begin();
         for (Entity entity : renderQueue) {
             Components.TextureRegionC tex = textureM.get(entity);
             Components.TransformC t = transformM.get(entity);
@@ -54,12 +53,6 @@ public class RenderingSystem extends SortedIteratingSystem {
                 continue;
             }
 
-            Gdx.app.log("RenderingSystem",
-                    "Region: " + tex.region +
-                            "\nPosition: " + (body.body.getPosition().x - 0.5f) + ", " + (body.body.getPosition().y - 0.5f) +
-                            "\nScale: " + t.scale.x + ", " + t.scale.y
-            );
-
             batch.draw(tex.region,
                     body.body.getPosition().x - 0.5f, body.body.getPosition().y - 0.5f,
 //                    0, 0,
@@ -67,6 +60,7 @@ public class RenderingSystem extends SortedIteratingSystem {
 //                    t.scale.x, t.scale.y,
 //                    body.body.getAngle() * MathUtils.radiansToDegrees);
         }
+        batch.end();
         renderQueue.clear();
     }
 

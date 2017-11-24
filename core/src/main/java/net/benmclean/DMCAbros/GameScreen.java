@@ -81,7 +81,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         tfc.scale.set(1, 1);
         e.add(tfc);
         Components.BodyC bc = engine.createComponent(Components.BodyC.class);
-        bc.body = createBox(x, y, 1f, 1f, false, world);
+        bc.body = createBox(x, y, true, world);
         e.add(bc);
         return e;
     }
@@ -97,9 +97,13 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         tfc.scale.set(1, 1);
         e.add(tfc);
         Components.BodyC bc = engine.createComponent(Components.BodyC.class);
-        bc.body = createBox(x, y, 1f, 1f, false, world);
+        bc.body = createBox(x, y, false, world);
         e.add(bc);
         return e;
+    }
+
+    public static Body createBox(float x, float y, boolean dynamic, World world) {
+        return createBox(x, y, 1f, 1f, dynamic, world);
     }
 
     public static Body createBox(float x, float y, float w, float h, boolean dynamic, World world) {
@@ -138,9 +142,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         cam.position.set(0, 5, 0);
         cam.update();
         batch.setProjectionMatrix(cam.combined);
-        batch.begin();
         engine.update(delta); // This is where the magic happens.
-        batch.end();
 
         elapsedTime += delta;
         if (elapsedTime / 1000f > secondsToSplash) {
