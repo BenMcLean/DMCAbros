@@ -9,7 +9,7 @@ import net.benmclean.DMCAbros.DMCAbrosGame;
 public class GwtLauncher extends GwtApplication {
     @Override
     public GwtApplicationConfiguration getConfig() {
-        GwtApplicationConfiguration configuration = new GwtApplicationConfiguration(1280, 720);
+        GwtApplicationConfiguration configuration = new GwtApplicationConfiguration(854, 480);
         return configuration;
     }
 
