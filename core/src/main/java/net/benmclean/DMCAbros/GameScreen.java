@@ -61,10 +61,10 @@ public class GameScreen extends ScreenAdapter implements Disposable {
 
         world = new World(new Vector2(0f, -9.8f), true);
         engine = new PooledEngine();
-        engine.addSystem(new RenderingSystem(batch, assets));
+        engine.addSystem(new PlayerControlSystem(controller));
         engine.addSystem(new PhysicsSystem(world));
         engine.addSystem(new PhysicsDebugSystem(world, cam));
-        engine.addSystem(new PlayerControlSystem(controller));
+        engine.addSystem(new RenderingSystem(batch, assets));
 
 //        engine.addEntity(brick(-1, 0));
 //        engine.addEntity(brick(0, 0));
