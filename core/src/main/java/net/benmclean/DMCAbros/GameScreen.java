@@ -77,7 +77,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
             Gdx.app.exit();
         }
 
-        engine.addEntity(avatar(32, 16));
+        engine.addEntity(avatar(8, 8));
 
         Gdx.input.setInputProcessor(controller);
 
