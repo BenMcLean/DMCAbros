@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -11,6 +12,8 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Disposable;
+
+import java.io.FileNotFoundException;
 
 /**
  * Some code was copied from https://github.com/RoaringCatGames/libgdx-ashley-box2d-example
@@ -34,7 +37,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
 //    protected TextureRegion screenRegion;
 //    protected Viewport worldView;
 //    protected Viewport screenView;
-    protected Entity e;
+    protected Components.BodyC playerBody;
 
     public GameScreen(Assets assets, SpriteBatch batch, FrameBuffer frameBuffer, IScreenDispatcher dispatcher) {
         super();
@@ -63,15 +66,36 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         engine.addSystem(new PhysicsDebugSystem(world, cam));
         engine.addSystem(new PlayerControlSystem(controller));
 
-        engine.addEntity(brick(-1, 0));
-        engine.addEntity(brick(0, 0));
-        engine.addEntity(brick(1, 0));
+//        engine.addEntity(brick(-1, 0));
+//        engine.addEntity(brick(0, 0));
+//        engine.addEntity(brick(1, 0));
 
-        engine.addEntity(avatar(0, 2));
+        try {
+            loadLevel("maps/smb/1-1.txt");
+        } catch (FileNotFoundException e) {
+            Gdx.app.log("GameScreen", "FileNotFoundException!");
+            Gdx.app.exit();
+        }
+
+        engine.addEntity(avatar(32, 16));
 
         Gdx.input.setInputProcessor(controller);
 
         isInitialized = true;
+    }
+
+    public void loadLevel(String filename) throws FileNotFoundException {
+        FileHandle file = Gdx.files.internal(filename);
+        if (!file.exists()) throw new FileNotFoundException();
+        String[] stuff = file.readString().split(";");
+        String[] blocks = stuff[0].split(",");
+        int mapWidth = blocks.length / 15;
+        for (int x = 0; x < mapWidth; x++)
+            for (int y = 1; y < 15; y++) {
+                String block = blocks[(y - 1) * (mapWidth) + x];
+                if (!block.equals("1") && !block.contains("-"))
+                    engine.addEntity(brick(x, 15 - y));
+            }
     }
 
     public Entity avatar(int x, int y) {
@@ -84,9 +108,9 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         tfc.z = 1;
         tfc.scale.set(1, 1);
         e.add(tfc);
-        Components.BodyC bc = engine.createComponent(Components.BodyC.class);
-        bc.body = createBox(x, y, true, world);
-        e.add(bc);
+        playerBody = engine.createComponent(Components.BodyC.class);
+        playerBody.body = createBox(x, y, true, world);
+        e.add(playerBody);
         Components.StateC stateCom = engine.createComponent(Components.StateC.class);
         stateCom.set(Components.StateC.STATE_NORMAL);
         e.add(stateCom);
@@ -99,7 +123,8 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         Entity e = new Entity();
         e.add(Components.TypeC.Brick);
         Components.TextureRegionC tc = engine.createComponent(Components.TextureRegionC.class);
-        tc.region = assets.atlas.findRegion("bricks/brick00");;
+        tc.region = assets.atlas.findRegion("bricks/brick00");
+        ;
         e.add(tc);
         Components.TransformC tfc = engine.createComponent(Components.TransformC.class);
         tfc.z = 1;
@@ -148,7 +173,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
     private void update(float delta) {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        cam.position.set(0, 5, 0);
+        cam.position.set(playerBody.body.getPosition().x, playerBody.body.getPosition().y, 0);
         cam.update();
         batch.setProjectionMatrix(cam.combined);
         engine.update(delta); // This is where the magic happens.
