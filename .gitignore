@@ -65,4 +65,4 @@ nb-configuration.xml
 *.so
 
 ## Include web demo in repository for Github Pages
-!html/build/dist
+!html/build/dist/
