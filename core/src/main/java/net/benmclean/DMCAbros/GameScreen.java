@@ -5,7 +5,6 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -37,7 +36,6 @@ public class GameScreen extends ScreenAdapter implements Disposable {
 //    protected TextureRegion screenRegion;
 //    protected Viewport worldView;
 //    protected Viewport screenView;
-    protected Components.BodyC playerBody;
 
     public GameScreen(Assets assets, SpriteBatch batch, FrameBuffer frameBuffer, IScreenDispatcher dispatcher) {
         super();
@@ -64,7 +62,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         engine.addSystem(new PlayerControlSystem(controller));
         engine.addSystem(new PhysicsSystem(world));
         engine.addSystem(new PhysicsDebugSystem(world, cam));
-        engine.addSystem(new RenderingSystem(batch, assets));
+        engine.addSystem(new RenderingSystem(batch, cam, assets));
 
 //        engine.addEntity(brick(-1, 0));
 //        engine.addEntity(brick(0, 0));
@@ -77,7 +75,11 @@ public class GameScreen extends ScreenAdapter implements Disposable {
             Gdx.app.exit();
         }
 
-        engine.addEntity(avatar(8, 8));
+        Entity player = avatar(8, 8);
+        engine.getSystem(RenderingSystem.class).setCamTarget(
+                player.getComponent(Components.BodyC.class).body
+        );
+        engine.addEntity(player);
 
         Gdx.input.setInputProcessor(controller);
 
@@ -108,7 +110,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         tfc.z = 1;
         tfc.scale.set(1, 1);
         e.add(tfc);
-        playerBody = engine.createComponent(Components.BodyC.class);
+        Components.BodyC playerBody = engine.createComponent(Components.BodyC.class);
         playerBody.body = createBox(x, y, true, world);
         e.add(playerBody);
         Components.StateC stateCom = engine.createComponent(Components.StateC.class);
@@ -171,11 +173,6 @@ public class GameScreen extends ScreenAdapter implements Disposable {
     }
 
     private void update(float delta) {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        cam.position.set(playerBody.body.getPosition().x, playerBody.body.getPosition().y, 0);
-        cam.update();
-        batch.setProjectionMatrix(cam.combined);
         engine.update(delta); // This is where the magic happens.
 
         elapsedTime += delta;
