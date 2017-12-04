@@ -1,6 +1,5 @@
 package net.benmclean.DMCAbros;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.SortedIteratingSystem;
@@ -17,28 +16,16 @@ import java.util.Comparator;
  * Some code was copied from https://github.com/RoaringCatGames/libgdx-ashley-box2d-example
  */
 public class RenderingSystem extends SortedIteratingSystem {
-    //    static final float PPM = 16.0f;
-//    public static final float PIXELS_TO_METRES = 1.0f / PPM;
-//    private static Vector2 meterDimensions = new Vector2();
-//    private static Vector2 pixelDimensions = new Vector2();
     public Assets assets;
     private SpriteBatch batch;
     private Array<Entity> renderQueue;
     private Comparator<Entity> comparator;
-    private ComponentMapper<Components.TextureRegionC> textureM;
-    private ComponentMapper<Components.TransformC> transformM;
-    private ComponentMapper<Components.BodyC> bodyM;
     public Camera cam;
     public Body camTarget;
 
     public RenderingSystem(SpriteBatch batch, Camera cam, Assets assets) {
         super(Family.all(Components.TransformC.class, Components.TextureRegionC.class).get(), new ZComparator());
         comparator = new ZComparator();
-
-        textureM = ComponentMapper.getFor(Components.TextureRegionC.class);
-        transformM = ComponentMapper.getFor(Components.TransformC.class);
-        bodyM = ComponentMapper.getFor(Components.BodyC.class);
-
         renderQueue = new Array<Entity>();
 
         this.batch = batch;
@@ -64,9 +51,9 @@ public class RenderingSystem extends SortedIteratingSystem {
         renderQueue.sort(comparator);
         batch.begin();
         for (Entity entity : renderQueue) {
-            Components.TextureRegionC tex = textureM.get(entity);
-            Components.TransformC t = transformM.get(entity);
-            Components.BodyC body = bodyM.get(entity);
+            Components.TextureRegionC tex = Components.textureC.get(entity);
+            Components.TransformC t = Components.transformC.get(entity);
+            Components.BodyC body = Components.bodyC.get(entity);
 
             if (tex.region == null || t.isHidden) {
                 continue;
