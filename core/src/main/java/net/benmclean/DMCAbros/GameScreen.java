@@ -60,6 +60,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         world = new World(new Vector2(0f, -9.8f), true);
         engine = new PooledEngine();
         engine.addSystem(new PlayerControlSystem(controller));
+        engine.addSystem(new MobSystem());
         engine.addSystem(new PhysicsSystem(world));
         engine.addSystem(new PhysicsDebugSystem(world, cam));
         engine.addSystem(new RenderingSystem(batch, cam, assets));
@@ -95,7 +96,9 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         for (int x = 0; x < mapWidth; x++)
             for (int y = 1; y < 15; y++) {
                 String block = blocks[(y - 1) * (mapWidth) + x];
-                if (!block.equals("1") && !block.contains("-"))
+                if (block.contains("-"))
+                    engine.addEntity(goober(x, 15 - y));
+                else if (!block.equals("1"))
                     engine.addEntity(brick(x, 15 - y));
             }
     }
@@ -135,6 +138,23 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         Components.BodyC bc = engine.createComponent(Components.BodyC.class);
         bc.body = createBox(x, y, false, world);
         e.add(bc);
+        return e;
+    }
+
+    public Entity goober(int x, int y) {
+        Entity e = new Entity();
+        e.add(Components.TypeC.Mob);
+        Components.TextureRegionC tc = engine.createComponent(Components.TextureRegionC.class);
+        tc.region = assets.atlas.findRegion("characters/BlobS0");
+        e.add(tc);
+        Components.TransformC tfc = engine.createComponent(Components.TransformC.class);
+        tfc.z = 1;
+        tfc.scale.set(1, 1);
+        e.add(tfc);
+        Components.BodyC bodyC = engine.createComponent(Components.BodyC.class);
+        bodyC.body = createBox(x, y, true, world);
+        e.add(bodyC);
+        e.add(engine.createComponent(Components.PacingBehavior.class));
         return e;
     }
 

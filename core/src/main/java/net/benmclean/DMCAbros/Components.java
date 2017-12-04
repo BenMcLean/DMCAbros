@@ -42,10 +42,6 @@ public class Components {
         public Entity collisionEntity;
     }
 
-    public static class PlayerC implements Component {
-
-    }
-
     public static class StateC implements Component {
         public static final int STATE_NORMAL = 0;
         public static final int STATE_JUMPING = 1;
@@ -65,5 +61,16 @@ public class Components {
         public int get() {
             return state;
         }
+    }
+
+    public interface BehaviorI extends Component {
+        boolean active = false;
+    }
+
+    public static class PlayerC implements BehaviorI {
+    }
+
+    public static class PacingBehavior implements BehaviorI {
+        public boolean facingRight = false;
     }
 }
