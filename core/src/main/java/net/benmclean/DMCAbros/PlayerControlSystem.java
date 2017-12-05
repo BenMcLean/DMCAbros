@@ -57,5 +57,8 @@ public class PlayerControlSystem extends IteratingSystem {
             b2body.body.applyLinearImpulse(0, 75f, b2body.body.getWorldCenter().x, b2body.body.getWorldCenter().y, true);
             state.set(Components.StateC.STATE_JUMPING);
         }
+
+        // falling down pits
+        if (b2body.body.getPosition().y < 0) b2body.body.setTransform(b2body.body.getPosition().x, 18f, 0f);
     }
 }
