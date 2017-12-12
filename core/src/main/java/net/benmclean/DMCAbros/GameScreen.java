@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Disposable;
+import squidpony.squidmath.LightRNG;
 
 import java.io.FileNotFoundException;
 
@@ -36,9 +37,17 @@ public class GameScreen extends ScreenAdapter implements Disposable {
 //    protected TextureRegion screenRegion;
 //    protected Viewport worldView;
 //    protected Viewport screenView;
+    long SEED;
+    Assets.Brick brick;
 
     public GameScreen(Assets assets, SpriteBatch batch, FrameBuffer frameBuffer, IScreenDispatcher dispatcher) {
+        this(0, assets, batch, frameBuffer, dispatcher);
+    }
+
+    public GameScreen(long SEED, Assets assets, SpriteBatch batch, FrameBuffer frameBuffer, IScreenDispatcher dispatcher) {
         super();
+        this.SEED = SEED;
+        brick = Assets.Brick.values()[LightRNG.determineBounded(SEED, Assets.Brick.values().length)];
         this.batch = batch;
         this.dispatcher = dispatcher;
         this.assets = assets;
@@ -99,7 +108,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
                 if (block.contains("-"))
                     engine.addEntity(goober(x, 15 - y));
                 else if (!block.equals("1"))
-                    engine.addEntity(brick(x, 15 - y));
+                    engine.addEntity(brick(x, 15 - y, brick));
             }
     }
 
@@ -124,12 +133,11 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         return e;
     }
 
-    public Entity brick(int x, int y) {
+    public Entity brick(int x, int y, Assets.Brick brick) {
         Entity e = new Entity();
         e.add(Components.TypeC.Brick);
         Components.TextureRegionC tc = engine.createComponent(Components.TextureRegionC.class);
-        tc.region = assets.atlas.findRegion("bricks/brick00");
-        ;
+        tc.region = assets.atlas.findRegion("bricks/" + brick.toString());
         e.add(tc);
         Components.TransformC tfc = engine.createComponent(Components.TransformC.class);
         tfc.z = 1;

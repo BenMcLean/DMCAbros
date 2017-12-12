@@ -82,4 +82,45 @@ public class Assets implements Disposable {
             return string;
         }
     }
+
+    public enum Brick {
+        Brick00("brick00"),
+        Brick01("brick01"),
+        Brick02("brick02"),
+        Brick03("brick03"),
+        Brick04("brick04"),
+        Brick05("brick05"),
+        Brick06("brick06"),
+        Brick07("brick07"),
+        Brick08("brick08"),
+        Brick09("brick09"),
+        Brick10("brick10"),
+        Brick11("brick11"),
+        Brick12("brick12"),
+        Brick13("brick13"),
+        Brick14("brick14"),
+        Brick15("brick15"),
+        Brick16("brick16"),
+        Brick17("brick17"),
+        Brick18("brick18"),
+        Brick19("brick19"),
+        Brick20("brick20"),
+        Brick21("brick21"),
+        Brick22("brick22"),
+        Brick23("brick23"),
+        Brick24("brick24"),
+        Brick25("brick25"),
+        Brick26("brick26"),
+        Brick27("brick27");
+
+        private String string;
+
+        Brick(String string) {
+            this.string = string;
+        }
+
+        public String toString() {
+            return string;
+        }
+    }
 }

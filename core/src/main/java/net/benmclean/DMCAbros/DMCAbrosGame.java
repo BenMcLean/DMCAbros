@@ -13,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
  */
 public class DMCAbrosGame extends Game {
+    public long SEED = System.currentTimeMillis();
     public Assets assets;
     protected ScreenDispatcher screenDispatcher;
     protected SpriteBatch batch;
@@ -25,7 +26,7 @@ public class DMCAbrosGame extends Game {
         batch = new SpriteBatch();
         screenDispatcher = new ScreenDispatcher();
         frameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, Assets.VIRTUAL_WIDTH, Assets.VIRTUAL_HEIGHT, false, false);
-        Screen gameScreen = new GameScreen(assets, batch, frameBuffer, screenDispatcher);
+        Screen gameScreen = new GameScreen(SEED, assets, batch, frameBuffer, screenDispatcher);
         screenDispatcher.AddScreen(gameScreen);
         setScreen(gameScreen);
     }
