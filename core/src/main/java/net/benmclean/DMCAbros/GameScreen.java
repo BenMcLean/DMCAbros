@@ -8,10 +8,12 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Disposable;
+import net.benmclean.utils.AtlasRepacker;
 import squidpony.squidgrid.gui.gdx.SColor;
 import squidpony.squidmath.LightRNG;
 import squidpony.squidmath.RNG;
@@ -25,6 +27,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
     protected final float VIRTUAL_HEIGHT = 12f;
 
     public Assets assets;
+    public TextureAtlas atlas;
     protected boolean isInitialized = false;
     protected float elapsedTime = 0f;
     protected int secondsToSplash = 10;
@@ -62,6 +65,10 @@ public class GameScreen extends ScreenAdapter implements Disposable {
                 brickColor,
                 new Color(brickColor.r * 1.5f, brickColor.g * 1.5f, brickColor.b * 1.5f, 1f)
         };
+
+        AtlasRepacker packer = new AtlasRepacker().pack("brick", assets.atlas.findRegion("bricks/" + brick.toString()), brickColors);
+        atlas = packer.generateTextureAtlas();
+        packer.dispose();
 
         this.batch = batch;
         this.dispatcher = dispatcher;
@@ -153,7 +160,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         Entity e = new Entity();
         e.add(Components.TypeC.Brick);
         Components.TextureRegionC tc = engine.createComponent(Components.TextureRegionC.class);
-        tc.region = assets.atlas.findRegion("bricks/" + brick.toString());
+        tc.region = atlas.findRegion("brick");
         e.add(tc);
         Components.TransformC tfc = engine.createComponent(Components.TransformC.class);
         tfc.z = 1;
