@@ -5,13 +5,16 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Disposable;
+import squidpony.squidgrid.gui.gdx.SColor;
 import squidpony.squidmath.LightRNG;
+import squidpony.squidmath.RNG;
 
 import java.io.FileNotFoundException;
 
@@ -39,6 +42,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
 //    protected Viewport screenView;
     long SEED;
     Assets.Brick brick;
+    Color backgroundColor;
 
     public GameScreen(Assets assets, SpriteBatch batch, FrameBuffer frameBuffer, IScreenDispatcher dispatcher) {
         this(0, assets, batch, frameBuffer, dispatcher);
@@ -48,6 +52,17 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         super();
         this.SEED = SEED;
         brick = Assets.Brick.values()[LightRNG.determineBounded(SEED, Assets.Brick.values().length)];
+        RNG rng = new RNG(SEED);
+        backgroundColor = SColor.randomColorWheel(rng, 1, 2);
+
+        Color brickColor = SColor.randomColorWheel(rng, 2, 2);
+        Color[] brickColors = new Color[]{
+                Color.BLACK,
+                new Color(brickColor.r / 2f, brickColor.g / 2f, brickColor.b / 2f, 1f),
+                brickColor,
+                new Color(brickColor.r * 1.5f, brickColor.g * 1.5f, brickColor.b * 1.5f, 1f)
+        };
+
         this.batch = batch;
         this.dispatcher = dispatcher;
         this.assets = assets;
@@ -73,6 +88,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         engine.addSystem(new PhysicsSystem(world));
         engine.addSystem(new PhysicsDebugSystem(world, cam));
         engine.addSystem(new RenderingSystem(batch, cam, assets));
+        engine.getSystem(RenderingSystem.class).setBackgroundColor(backgroundColor);
 
 //        engine.addEntity(brick(-1, 0));
 //        engine.addEntity(brick(0, 0));

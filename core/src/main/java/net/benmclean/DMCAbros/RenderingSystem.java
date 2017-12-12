@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.SortedIteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -22,6 +23,7 @@ public class RenderingSystem extends SortedIteratingSystem {
     private Comparator<Entity> comparator;
     public Camera cam;
     public Body camTarget;
+    public Color backgroundColor = Color.BLACK;
 
     public RenderingSystem(SpriteBatch batch, Camera cam, Assets assets) {
         super(Family.all(Components.TransformC.class, Components.TextureRegionC.class).get(), new ZComparator());
@@ -37,11 +39,15 @@ public class RenderingSystem extends SortedIteratingSystem {
         camTarget = body;
     }
 
+    public void setBackgroundColor (Color color) {
+        backgroundColor = color;
+    }
+
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
 
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
+        Gdx.gl.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         if (camTarget != null) {
             cam.position.set(camTarget.getPosition().x, camTarget.getPosition().y, 0);

@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * AtlasRepacker makes it possible to palette-swap the game's art assets at runtime.
- * This works together with the static pack methods in PaletteShader. The advantage of using this class as a wrapper for those methods are twofold:
+ * This works together with the static pack methods in PaletteShader. The advantages of using this class as a wrapper for those methods are twofold:
  * 1. Cleaner syntax.
  * 2. When repacking a TextureAtlas.AtlasRegion, this class ensures that 9-patch data  (pads and splits) is preserved.
  *
