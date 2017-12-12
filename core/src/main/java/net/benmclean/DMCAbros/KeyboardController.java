@@ -1,5 +1,6 @@
 package net.benmclean.DMCAbros;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
@@ -33,6 +34,9 @@ public class KeyboardController implements InputProcessor {
             case Input.Keys.DOWN:    // if keycode is the same as Input.Keys.LEFT a.k.a 20
                 down = true;    // do this
                 keyProcessed = true;    // we have reacted to a keypress
+                break;
+            case Input.Keys.ESCAPE:
+                Gdx.app.exit();
         }
         return keyProcessed;    //  return our peyProcessed flag
     }
