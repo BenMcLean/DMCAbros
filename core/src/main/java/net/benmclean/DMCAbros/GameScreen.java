@@ -45,6 +45,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
 //    protected Viewport screenView;
     long SEED;
     Assets.Brick brick;
+    Assets.Character character;
     Color backgroundColor;
 
     public GameScreen(Assets assets, SpriteBatch batch, FrameBuffer frameBuffer, IScreenDispatcher dispatcher) {
@@ -55,6 +56,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         super();
         this.SEED = SEED;
         brick = Assets.Brick.values()[LightRNG.determineBounded(SEED, Assets.Brick.values().length)];
+        character = Assets.Character.values()[LightRNG.determineBounded(SEED, Assets.Character.values().length)];
         RNG rng = new RNG(SEED);
         backgroundColor = SColor.randomColorWheel(rng, 1, 2);
 
@@ -72,6 +74,13 @@ public class GameScreen extends ScreenAdapter implements Disposable {
                 new Color(blobColor.r / 2f, blobColor.g / 2f, blobColor.b / 2f, 1f),
                 blobColor,
                 new Color(blobColor.r * 1.5f, blobColor.g * 1.5f, blobColor.b * 1.5f, 1f)
+        });
+        Color guyColor = SColor.randomColorWheel(rng, 2, 2);
+        packer.pack("guy", assets.atlas.findRegion("characters/" + character.toString() + "E0"), new Color[]{
+                Color.BLACK,
+                new Color(guyColor.r / 2f, guyColor.g / 2f, guyColor.b / 2f, 1f),
+                guyColor,
+                new Color(guyColor.r * 1.5f, guyColor.g * 1.5f, guyColor.b * 1.5f, 1f)
         });
         atlas = packer.generateTextureAtlas();
         packer.dispose();
@@ -145,7 +154,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         Entity e = new Entity();
         e.add(Components.TypeC.Mob);
         Components.TextureRegionC tc = engine.createComponent(Components.TextureRegionC.class);
-        tc.region = assets.atlas.findRegion("characters/AstronautE0");
+        tc.region = atlas.findRegion("guy");
         e.add(tc);
         Components.TransformC tfc = engine.createComponent(Components.TransformC.class);
         tfc.z = 1;
