@@ -1,7 +1,7 @@
 d:assets:0:application/unknown
-t:art.atlas:28884:application/unknown
+t:art.atlas:27090:application/unknown
 i:art.png:97:image/png
-i:art2.png:1369:image/png
+i:art2.png:1368:image/png
 i:art3.png:8736:image/png
 i:art4.png:1146:image/png
 i:art5.png:451:image/png
