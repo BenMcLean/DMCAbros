@@ -58,15 +58,21 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         RNG rng = new RNG(SEED);
         backgroundColor = SColor.randomColorWheel(rng, 1, 2);
 
+        AtlasRepacker packer = new AtlasRepacker();
         Color brickColor = SColor.randomColorWheel(rng, 2, 2);
-        Color[] brickColors = new Color[]{
+        packer.pack("brick", assets.atlas.findRegion("bricks/" + brick.toString()), new Color[]{
                 Color.BLACK,
                 new Color(brickColor.r / 2f, brickColor.g / 2f, brickColor.b / 2f, 1f),
                 brickColor,
                 new Color(brickColor.r * 1.5f, brickColor.g * 1.5f, brickColor.b * 1.5f, 1f)
-        };
-
-        AtlasRepacker packer = new AtlasRepacker().pack("brick", assets.atlas.findRegion("bricks/" + brick.toString()), brickColors);
+        });
+        Color blobColor = SColor.randomColorWheel(rng, 2, 2);
+        packer.pack("blob", assets.atlas.findRegion("characters/BlobS0"), new Color[]{
+                Color.BLACK,
+                new Color(blobColor.r / 2f, blobColor.g / 2f, blobColor.b / 2f, 1f),
+                blobColor,
+                new Color(blobColor.r * 1.5f, blobColor.g * 1.5f, blobColor.b * 1.5f, 1f)
+        });
         atlas = packer.generateTextureAtlas();
         packer.dispose();
 
@@ -176,7 +182,7 @@ public class GameScreen extends ScreenAdapter implements Disposable {
         Entity e = new Entity();
         e.add(Components.TypeC.Mob);
         Components.TextureRegionC tc = engine.createComponent(Components.TextureRegionC.class);
-        tc.region = assets.atlas.findRegion("characters/BlobS0");
+        tc.region = atlas.findRegion("blob");
         e.add(tc);
         Components.TransformC tfc = engine.createComponent(Components.TransformC.class);
         tfc.z = 1;
