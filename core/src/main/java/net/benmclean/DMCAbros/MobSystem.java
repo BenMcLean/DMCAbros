@@ -18,9 +18,9 @@ public class MobSystem extends IteratingSystem {
         if (pacing != null && !pacing.active) {
             Components.BodyC bodyC = Components.bodyC.get(entity);
             if (pacing.facingRight)
-                bodyC.body.setLinearVelocity(1f, bodyC.body.getLinearVelocity().y);
+                bodyC.body.applyForceToCenter(pacing.speed, 0f, true);
             else
-                bodyC.body.setLinearVelocity(-1f, bodyC.body.getLinearVelocity().y);
+                bodyC.body.applyForceToCenter(pacing.speed * -1f, 0f, true);
         }
     }
 }

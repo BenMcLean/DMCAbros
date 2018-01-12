@@ -85,11 +85,14 @@ public class Components {
     public static final ComponentMapper<PlayerC> playerC = ComponentMapper.getFor(PlayerC.class);
 
     public static class PlayerC implements BehaviorI {
+        public float speed = 50f;
+        public float jump = 3000f;
     }
 
     public static final ComponentMapper<PacingBehavior> pacingBehavior = ComponentMapper.getFor(PacingBehavior.class);
 
     public static class PacingBehavior implements BehaviorI {
         public boolean facingRight = false;
+        public float speed = 30f;
     }
 }

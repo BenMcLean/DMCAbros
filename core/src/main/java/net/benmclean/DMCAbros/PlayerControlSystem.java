@@ -3,13 +3,14 @@ package net.benmclean.DMCAbros;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 
 /**
  * Some code was copied from https://www.gamedevelopment.blog/ashley-and-box2d-tutorial/
  */
 public class PlayerControlSystem extends IteratingSystem {
     KeyboardController controller;  // our input controller
+    Vector2 walk = new Vector2();
 
     @SuppressWarnings("unchecked")
     public PlayerControlSystem(KeyboardController keyCon) {
@@ -24,6 +25,9 @@ public class PlayerControlSystem extends IteratingSystem {
         Components.BodyC b2body = Components.bodyC.get(entity);
         // get the entity state
         Components.StateC state = Components.stateC.get(entity);
+        // get the Player component
+        Components.PlayerC player = Components.playerC.get(entity);
+
         // if body is going down set state falling
         if (b2body.body.getLinearVelocity().y > 0) {
             state.set(Components.StateC.STATE_FALLING);
@@ -41,20 +45,17 @@ public class PlayerControlSystem extends IteratingSystem {
         }
         // apply forces depending on controller input
         if (controller.left) {
-            b2body.body.setLinearVelocity(MathUtils.lerp(b2body.body.getLinearVelocity().x, -5f, 0.2f), b2body.body.getLinearVelocity().y);
+//            b2body.body.setLinearVelocity(MathUtils.lerp(b2body.body.getLinearVelocity().x, -5f, 0.2f), b2body.body.getLinearVelocity().y);
+            b2body.body.applyForceToCenter(player.speed * -1, 0f, true);
         }
         if (controller.right) {
-            b2body.body.setLinearVelocity(MathUtils.lerp(b2body.body.getLinearVelocity().x, 5f, 0.2f), b2body.body.getLinearVelocity().y);
-        }
-
-        if (!controller.left && !controller.right) {
-            b2body.body.setLinearVelocity(MathUtils.lerp(b2body.body.getLinearVelocity().x, 0, 0.1f), b2body.body.getLinearVelocity().y);
+            b2body.body.applyForceToCenter(player.speed, 0f, true);
         }
 
         if (controller.up &&
                 (state.get() == Components.StateC.STATE_NORMAL || state.get() == Components.StateC.STATE_MOVING)) {
             //b2body.body.applyForceToCenter(0, 3000,true);
-            b2body.body.applyLinearImpulse(0, 75f, b2body.body.getWorldCenter().x, b2body.body.getWorldCenter().y, true);
+            b2body.body.applyForceToCenter(0, player.jump, true);
             state.set(Components.StateC.STATE_JUMPING);
         }
 
